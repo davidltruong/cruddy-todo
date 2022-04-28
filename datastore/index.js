@@ -10,31 +10,34 @@ var items = {};
 exports.create = (text, callback) => {
   counter.getNextUniqueId((err, number) => {
     fs.writeFile(path.join(exports.dataDir, number + '.txt'), text, (err) => {
-      items.id = number;
-      items.text = text;
+      items[number] = {id: number, text: text};
       if (err) {
         throw ('error writing counter');
       } else {
-        callback(null, items);
+        callback(null, items[number]);
       }
     });
   });
 };
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
+  var data = fs.readdirSync(exports.dataDir);
+  data = _.map(data, (text, id) => {
+    text = text.slice(0, 5);
+    return { id: text, text };
   });
   callback(null, data);
 };
 
 exports.readOne = (id, callback) => {
-  var text = items[id];
-  if (!text) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback(null, { id, text });
-  }
+  var filePath = path.join(exports.dataDir, id + '.txt');
+  fs.readFile(filePath, "utf8", (err, fileData) => {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null, {id, text: fileData});
+    }
+  });
 };
 
 exports.update = (id, text, callback) => {
