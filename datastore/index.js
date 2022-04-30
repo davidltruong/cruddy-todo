@@ -22,16 +22,26 @@ exports.create = (text, callback) => {
 
 exports.readAll = (callback) => {
   var data = fs.readdirSync(exports.dataDir);
-  data = _.map(data, (text, id) => {
-    text = text.slice(0, 5);
-    return { id: text, text };
+  data = _.map(data, (id) => {
+    id = id.slice(0, 5);
+    var filePath = path.join(exports.dataDir, id + '.txt');
+    return new Promise((resolve, reject) => {
+      fs.readFile(filePath, 'utf8', (err, text) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve({id, text});
+      });
+    });
   });
-  callback(null, data);
+  Promise.all(data).then((data) => {
+    callback(null, data);
+  });
 };
 
 exports.readOne = (id, callback) => {
   var filePath = path.join(exports.dataDir, id + '.txt');
-  fs.readFile(filePath, "utf8", (err, fileData) => {
+  fs.readFile(filePath, 'utf8', (err, fileData) => {
     if (err) {
       callback(err);
     } else {
@@ -59,14 +69,17 @@ exports.update = (id, text, callback) => {
 
 exports.delete = (id, callback) => {
   var filePath = path.join(exports.dataDir, id + '.txt');
-  fs.readFile(filePath, (err, fileData) => {
-    if (err) {
-      callback('error');
-    } else {
-      fs.unlinkSync(filePath);
-      callback();
-    }
+  fs.unlink(filePath, (err) => {
+    callback(err);
   });
+  // fs.readFile(filePath, (err, fileData) => {
+  //   if (err) {
+  //     callback('error');
+  //   } else {
+  //     fs.unlinkSync(filePath);
+  //     callback();
+  //   }
+  // });
 };
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
