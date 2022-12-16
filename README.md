@@ -23,7 +23,7 @@ This project uses [node](http://nodejs.org) and [npm](https://npmjs.com).
 
 ## Usage
 
-This project is to showcase the use of subclassing of the initial class dancer. Each type of subclass dancer will inherit methods form the superclass but also have distinct personalities.
+This project is to showcase the use of saving information to a hard drive via text files. Cruddy Todo list will take in any string and add that string as a list item for you to finish. You will be able to click on the checkmark to finish the task and delete it from the list. Editting will let you change the string and resave that new string into the same file.
 
 ![alt text](https://github.com/davidltruong/cruddy-todo/blob/master/screenshot.png?raw=true)
 
